@@ -10,6 +10,6 @@ terraform {
 provider "aws" {
   shared_config_files      = ["$HOME/.aws/config"]
   shared_credentials_files = ["$HOME/.aws/credentials"]
-  profile                  = ""  #provide configured aws profile
+  profile                  = "AdministratorAccess-289606388310"  #provide configured aws profile
   region                   = var.region
 }

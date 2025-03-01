@@ -17,12 +17,14 @@ resource "aws_lb_target_group" "aws_node_lb_TG" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "privat_TG_attachment" {
+resource "aws_lb_target_group_attachment" "private_TG_attachment" {
   target_group_arn = aws_lb_target_group.aws_node_lb_TG.arn
   target_id = aws_eks_node_group.private_nodes.id
+  depends_on = [aws_lb_target_group.aws_node_lb_TG.arn]
 }
 
 resource "aws_lb_target_group_attachment" "public_TG_attachment" {
   target_group_arn = aws_lb_target_group.aws_node_lb_TG.arn
   target_id = aws_eks_node_group.public_nodes.id
+  depends_on = [aws_lb_target_group.aws_node_lb_TG.arn]
 }

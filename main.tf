@@ -10,7 +10,10 @@ resource "aws_eks_cluster" "eks_cluster" {
       "${aws_subnet.private_Subnet[1].id}",
       "${aws_subnet.private_Subnet[2].id}"
     ]
-    security_group_ids = [aws_security_group.private_node_group.id]
+    security_group_ids = [
+      aws_security_group.private_node_group.id,
+      aws_security_group.public_node_group
+    ]
   }
   depends_on = [aws_iam_role_policy_attachment.AmazonEKSClusterPolicy]
 }
