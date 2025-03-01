@@ -36,3 +36,34 @@ resource "aws_security_group" "private_node_group" {
     Name = "private_SC_rule"
   }
 }
+
+resource "aws_security_group" "public_node_group" {
+  depends_on = [
+    aws_subnet.public_Subnet,
+    aws_subnet.private_Subnet
+  ]
+  name        = "public_instance"
+  description = "allow inbound traffic"
+  vpc_id      = aws_vpc.eks_vpc.id
+
+  ingress {
+    description = "Inbound from internet"
+    from_port   = 0    # all traffic
+    to_port     = 0    # all traffic
+    protocol    = "-1" # all traffic
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Outbound from internet"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    Name = "public_SC_rule"
+  }
+}
