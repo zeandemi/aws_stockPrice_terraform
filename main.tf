@@ -12,7 +12,7 @@ resource "aws_eks_cluster" "eks_cluster" {
     ]
     security_group_ids = [
       aws_security_group.private_node_group.id,
-      aws_security_group.public_node_group
+      aws_security_group.public_node_group.id
     ]
   }
   depends_on = [aws_iam_role_policy_attachment.AmazonEKSClusterPolicy]
@@ -22,7 +22,7 @@ resource "aws_eks_node_group" "private_nodes" {
   count           = length(local.subnets.public)
   cluster_name    = element(aws_eks_cluster.eks_cluster.*.id, count.index)
   subnet_ids      = ["${element(aws_subnet.private_Subnet.*.id, count.index)}"]
-  node_group_name = "t3_medium-node_group"
+  node_group_name = "t3_medium-node_privategroup"
   node_role_arn   = aws_iam_role.NodeGroupRole.arn
 
   scaling_config {
@@ -51,7 +51,7 @@ resource "aws_eks_node_group" "public_nodes" {
   count           = length(local.subnets.public)
   cluster_name    = element(aws_eks_cluster.eks_cluster.*.id, count.index)
   subnet_ids      = ["${element(aws_subnet.public_Subnet.*.id, count.index)}"]
-  node_group_name = "t3_medium-node_group"
+  node_group_name = "t3_medium-node_publicgroup"
   node_role_arn   = aws_iam_role.NodeGroupRole.arn
 
   scaling_config {
@@ -74,4 +74,14 @@ resource "aws_eks_node_group" "public_nodes" {
     aws_iam_role_policy_attachment.AmazonEC2ContainerRegistryReadOnly,
     aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy
   ]
+}
+
+data "aws_eks_node_group" "public_node_group" {
+  cluster_name = aws_eks_node_group.public_nodes.cluster_name
+  node_group_name = aws_eks_node_group.public_nodes.node_group_name
+}
+
+data "aws_eks_node_group" "private_node_group" {
+  cluster_name = aws_eks_node_group.private_nodes.cluster_name
+  node_group_name = aws_eks_node_group.private_nodes.node_group_name
 }
