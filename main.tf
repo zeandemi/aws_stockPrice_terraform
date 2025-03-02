@@ -75,13 +75,3 @@ resource "aws_eks_node_group" "public_nodes" {
     aws_iam_role_policy_attachment.AmazonEKS_CNI_Policy
   ]
 }
-
-data "aws_eks_node_group" "public_node_group" {
-  cluster_name = aws_eks_node_group.public_nodes.cluster_name
-  node_group_name = aws_eks_node_group.public_nodes.node_group_name
-}
-
-data "aws_eks_node_group" "private_node_group" {
-  cluster_name = aws_eks_node_group.private_nodes.cluster_name
-  node_group_name = aws_eks_node_group.private_nodes.node_group_name
-}

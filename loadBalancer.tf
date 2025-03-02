@@ -25,23 +25,3 @@ resource "aws_lb" "public_subnet_alb" {
   ip_address_type = "ipv4"
   depends_on = [ aws_subnet.public_Subnet ]
 }
-
-resource "aws_lb_listener" "private_alb_listerner" {  
-  load_balancer_arn = aws_lb.private_subnet_alb.arn
-  protocol = "HTTP"
-  port = 80
-  default_action {
-    type = "forward"
-    target_group_arn = aws_lb_target_group.aws_node_lb_TG.arn
-  }
-}
-
-resource "aws_lb_listener" "public_alb_listerner" {
-  load_balancer_arn = aws_lb.public_subnet_alb.arn
-  protocol = "HTTP"
-  port = 80
-  default_action {
-    type = "forward"
-    target_group_arn = aws_lb_target_group.aws_node_lb_TG_Public.arn
-  }
-}

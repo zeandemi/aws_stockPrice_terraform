@@ -8,12 +8,12 @@ resource "aws_lb_target_group" "aws_node_lb_TG" {
     healthy_threshold = 5
     unhealthy_threshold = 2
   }
-  name = "TG"
+  name = "PrivateTG"
   port = 80
   protocol = "HTTP"
   vpc_id = aws_vpc.eks_vpc.id
   tags = {
-    name = "Node TG"
+    name = "Private Node TG"
   }
 }
 
@@ -26,32 +26,22 @@ resource "aws_lb_target_group" "aws_node_lb_TG_Public" {
     healthy_threshold = 5
     unhealthy_threshold = 2
   }
-  name = "TG"
+  name = "PublicTG"
   port = 80
   protocol = "HTTP"
   vpc_id = aws_vpc.eks_vpc.id
   tags = {
-    name = "Node TG"
+    name = "Public Node TG"
   }
 }
-
 resource "aws_lb_target_group_attachment" "private_TG_attachment" {
-  #count = length(local.subnets.public)
- 
-  for_each = {
-   #  for node_id in data.aws_eks_node_group.public_node_group 
-   # for k, v in aws_eks_node_group.private_nodes :
-  #  k => v
-  }
   target_group_arn = aws_lb_target_group.aws_node_lb_TG.arn
-  target_id = each.value.id
+  target_id = aws_lb.private_subnet_alb.id
+  port = 80
 }
 
-resource "aws_lb_target_group_attachment" "public_TG_attachment" {
-  for_each = {
-    for k, v in aws_eks_node_group.public_nodes :
-    k => v
-  }  
+resource "aws_lb_target_group_attachment" "public_TG_attachment" { 
   target_group_arn = aws_lb_target_group.aws_node_lb_TG_Public.arn
-  target_id = each.key.id
+  target_id = aws_lb.public_subnet_alb.id
+  port = 80
 }

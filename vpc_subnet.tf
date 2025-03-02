@@ -128,3 +128,16 @@ resource "aws_route_table_association" "private_subnet_association" {
   route_table_id = element(aws_route_table.private_route_table.*.id, count.index)
   subnet_id      = element(aws_subnet.private_Subnet.*.id, count.index)
 }
+
+resource "aws_elasticache_subnet_group" "redis_subnetGroup"{
+  #count = length(local.subnets.public)
+  name = "redis-subnet-group"
+  subnet_ids = ["${aws_subnet.private_Subnet[0].id}",
+      "${aws_subnet.private_Subnet[1].id}",
+      "${aws_subnet.private_Subnet[2].id}"]
+
+
+  tags = {
+    Name = "Redis Subnet Group"
+  }
+}

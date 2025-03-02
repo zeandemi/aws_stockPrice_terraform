@@ -67,3 +67,28 @@ resource "aws_security_group" "public_node_group" {
     Name = "public_SC_rule"
   }
 }
+
+#security group for redis
+resource "aws_security_group" "redis_sg"{
+  vpc_id = aws_vpc.eks_vpc.id
+
+  ingress {
+    description = "Inbound from private subnet"
+    from_port   = 6379    # all traffic
+    to_port     = 6379    # all traffic
+    protocol    = "tcp" # all traffic
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    description = "Outbound from internet"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["10.0.0.0/16"] # Allow only internal VPC access
+  }
+
+  tags = {
+    Name = "redis security group"
+  }
+}
