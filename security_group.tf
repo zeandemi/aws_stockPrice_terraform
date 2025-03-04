@@ -71,13 +71,18 @@ resource "aws_security_group" "public_node_group" {
 #security group for redis
 resource "aws_security_group" "redis_sg"{
   vpc_id = aws_vpc.eks_vpc.id
+  name = "redis instance"
 
   ingress {
     description = "Inbound from private subnet"
     from_port   = 6379    # all traffic
     to_port     = 6379    # all traffic
     protocol    = "tcp" # all traffic
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [
+      "${aws_subnet.private_Subnet[0].cidr_block}",
+      "${aws_subnet.private_Subnet[1].cidr_block}",
+      "${aws_subnet.private_Subnet[2].cidr_block}"
+    ]
   }
 
   egress {
